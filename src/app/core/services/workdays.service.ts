@@ -56,7 +56,7 @@ export class WorkdaysService {
     private getWorkdayFromFirestore(name: string, fields: any): Workday {
       const tasks: Task[] = [];
       const workdayId: string = name.split('/')[6];
-       
+
       fields.tasks.arrayValue.values.forEach((data: any) => {
         const task: Task = new Task({
           completed: data.mapValue.fields.completed.booleanValue,
@@ -66,7 +66,7 @@ export class WorkdaysService {
         });
         tasks.push(task);
       });
-     
+
       return new Workday({
         id: workdayId,
         userId: fields.userId.stringValue,
@@ -76,23 +76,23 @@ export class WorkdaysService {
         tasks: tasks
       });
     }
-    
+
     getWorkdayByDate(date: string, userId: string): Observable<Workday|null> {
       const url = `${environment.firebase.firestore.baseURL}:runQuery?key=${environment.firebase.apiKey}`;
       const data = this.getSructuredQuery(date, userId);
       const jwt: string = localStorage.getItem('token')!;
-   
+
       const httpOptions = {
         headers: new HttpHeaders({
           'Content-Type':  'application/json',
           'Authorization': `Bearer ${jwt}`
         })
       };
-   
+
       return this.http.post(url, data, httpOptions).pipe(
         switchMap((data: any) => {
           const document = data[0].document;
-          if(!document) { 
+          if(!document) {
             return of(null);
           }
           return of(this.getWorkdayFromFirestore(document.name, document.fields));
@@ -107,7 +107,7 @@ export class WorkdaysService {
          title: { stringValue: task.title },
          todo: { integerValue: task.todo },
          done: { integerValue: task.done },
-         completed: { booleanValue: false } 
+         completed: { booleanValue: false }
         }
        }
       }
@@ -120,9 +120,9 @@ private getTaskListForFirestore(tasks: Task[]): any {
     values: []
    }
   };
-  
+
   tasks.forEach(task => taskList.arrayValue.values.push(this.getTaskForFirestore(task)));
-  
+
   return taskList;
  }
 
@@ -130,7 +130,7 @@ private getTaskListForFirestore(tasks: Task[]): any {
  private getWorkdayForFirestore(workday: Workday): any {
   let dueDate: number; // Timestamp traditionnelle en secondes.
   let dueDateMs: number; // Timestamp JavaScript en millisecondes.
-  
+
   if(typeof workday.dueDate == 'string') {
    dueDate = +workday.dueDate;
    dueDateMs = dueDate * 1000;
@@ -138,11 +138,11 @@ private getTaskListForFirestore(tasks: Task[]): any {
    dueDate = new Date(workday.dueDate).getTime() / 1000;
    dueDateMs = dueDate * 1000;
   }
-      
+
   // La nouvelle propriété displayDate est prise en compte.
   const displayDate: string = this.dateService.getDisplayDate(new Date(dueDateMs)); // La nouvelle propriété displayDate est prise en compte.
   const tasks: Object = this.getTaskListForFirestore(workday.tasks);
-  
+
   return {
    fields: {
     dueDate: { integerValue: dueDate },
@@ -164,7 +164,7 @@ private getTaskListForFirestore(tasks: Task[]): any {
         'Authorization': `Bearer ${jwt}`
       })
     };
-    
+
     this.loaderService.setLoading(true);
 
     return this.http.post(url, data, httpOptions).pipe(
@@ -187,7 +187,7 @@ private getTaskListForFirestore(tasks: Task[]): any {
       'Authorization': `Bearer ${jwt}`
      })
     };
-    
+
     return this.http.patch(url, data, httpOptions).pipe(
      tap(_ => this.toastrService.showToastr({
       category: 'success',
@@ -197,7 +197,7 @@ private getTaskListForFirestore(tasks: Task[]): any {
      finalize(() => this.loaderService.setLoading(false))
     );
    }
-   
+
     private getWorkdayByUserQuery(userId: string): any {
       return {
         'structuredQuery': {
@@ -256,7 +256,7 @@ private getTaskListForFirestore(tasks: Task[]): any {
         'Authorization': `Bearer ${jwt}`
        })
       };
-      
+
       return this.http.delete(url, httpOptions).pipe(
        tap(_ => this.toastrService.showToastr({
         category: 'success',
