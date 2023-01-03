@@ -20,4 +20,15 @@ export class PlanningWorkdayItemComponent implements OnInit {
 	removeWorkday(workday: Workday) {
 		this.workdayRemoved.emit(workday); 
 	   }
+	   
+	   goWorkday(workday: Workday) {
+		this.router.navigate(
+		 ['app/workday'], 
+		 { 
+		  queryParams: { 
+		   date: workday.dueDate 
+		  } 
+		 }
+		);
+	   }
 }

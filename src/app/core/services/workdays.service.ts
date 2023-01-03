@@ -198,28 +198,28 @@ private getTaskListForFirestore(tasks: Task[]): any {
     );
    }
 
-    private getWorkdayByUserQuery(userId: string): any {
-      return {
-        'structuredQuery': {
-         'from': [{
-          'collectionId': 'workdays'
-         }],
-         'where': {
-          'fieldFilter': {
-           'field': { 'fieldPath': 'userId' },
-           'op': 'EQUAL',
-           'value': { 'stringValue': userId }
-          }
-         },
-         "orderBy": [{
-          "field": {
-           "fieldPath": "dueDate"
-          },
-          "direction": "DESCENDING"
-         }]
-        }
-       };
-    }
+   private getWorkdayByUserQuery(userId: string): any {
+    return {
+     'structuredQuery': {
+      'from': [{
+       'collectionId': 'workdays'
+      }],
+      'where': {
+       'fieldFilter': {
+        'field': { 'fieldPath': 'userId' },
+        'op': 'EQUAL',
+        'value': { 'stringValue': userId }
+       }
+      },
+      "orderBy": [{
+       "field": {
+        "fieldPath": "dueDate"
+       },
+       "direction": "DESCENDING"
+      }]
+     }
+    };
+   }
     getWorkdayByUser(userId: string): any {
       const url = `${environment.firebase.firestore.baseURL}:runQuery?key=${environment.firebase.apiKey}`;
       const data = this.getWorkdayByUserQuery(userId);
@@ -247,16 +247,16 @@ private getTaskListForFirestore(tasks: Task[]): any {
       );
      }
 
-    remove(workday: Workday) {
+     remove(workday: Workday) {
       const url = `${environment.firebase.firestore.baseURL}/workdays/${workday.id}?key=${environment.firebase.apiKey}`;
       const jwt: string = localStorage.getItem('token')!;
       const httpOptions = {
        headers: new HttpHeaders({
         'Content-Type':  'application/json',
         'Authorization': `Bearer ${jwt}`
-       })
+       }) 
       };
-
+      
       return this.http.delete(url, httpOptions).pipe(
        tap(_ => this.toastrService.showToastr({
         category: 'success',
